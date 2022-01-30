@@ -99,198 +99,189 @@
       return "Serial Number: " + this.serialNumber + " Name: " + this.name + " Description: " + this.description + " Price: " + this.price + "€ Tax: " + this.tax + "%";
     }
   }
-  Object.defineProperty(Product.prototype, "serial", { enumerable: true });
-  Object.defineProperty(Product.prototype, "brand", { enumerable: true });
-  Object.defineProperty(Product.prototype, "model", { enumerable: true });
-  Object.defineProperty(Product.prototype, "price", { enumerable: true });
-  Object.defineProperty(Product.prototype, "taxPercentage", { enumerable: true });
+  Object.defineProperty(Product.prototype, "serialNumber", { enumerable: true });
+  Object.defineProperty(Product.prototype, "name", { enumerable: true });
   Object.defineProperty(Product.prototype, "description", { enumerable: true, writable: true });
+  Object.defineProperty(Product.prototype, "price", { enumerable: true });
+  Object.defineProperty(Product.prototype, "tax", { enumerable: true });
+  Object.defineProperty(Product.prototype, "images", { enumerable: true });
 
-  //Definimos la subclase Laptop
-  class Laptop extends Product {
+  //Definimos la subclase Processor
+  class Processor extends Product {
     //Atributos privados
-    #processor;
-    #memory;
-    #hd;
-    #size;
-    constructor(serial, brand, model, price, taxPercentage = Product.IVA, processor = "unkonwn", memory = "0GB", hd = "-", size = "0GB") {
+    #speed;
+    #socket;
+    #chipset;
+    #graphics;
+    constructor(serialNumber, name, description, price, tax = Product.IVA, images, speed = "0GHz", socket = "Unknow", chipset = "Unknow", graphics = "No") {
       //La función se invoca con el operador new
       if (!new.target) throw new InvalidAccessConstructorException();
       //Llamada al superconstructor.
       abstractCreateLock = false; //Desactivamos el cerrojo.
-      super(serial, brand, model, price, taxPercentage);
+      super(serialNumber, name, description, price, tax, images);
 
       //Validación de argumentos
-      if (!processor) throw new EmptyValueException("processor");
-      if (!/^((\d+GB)|(\d+TB))$/.test(memory)) throw new InvalidValueException("memory", memory);
-      if (!/^((HDD)|(SDD)|(-))$/.test(hd)) throw new InvalidValueException("hd", hd);
-      if (!/^((\d+GB)|(\d+TB))$/.test(size)) throw new InvalidValueException("size", size);
+      if (!socket) throw new EmptyValueException("socket");
+      if (!chipset) throw new EmptyValueException("chipset");
+      if (!/^\d*(\.\d*)?GHz$/.test(speed)) throw new InvalidValueException("speed", speed);
 
       //Atributos privados
-      this.#processor = processor;
-      this.#memory = memory;
-      this.#hd = hd;
-      this.#size = size;
+      this.#speed = speed;
+      this.#socket = socket;
+      this.#chipset = chipset;
+      this.#graphics = graphics;
     }
 
     //Propiedades de acceso a los atributos privados
-    get processor() {
-      return this.#processor;
+    get speed() {
+      return this.#speed;
     }
-    set processor(value) {
-      if (!value) throw new EmptyValueException("processor");
-      this.#processor = value;
+    set speed(value) {
+      if (!/^\d*(\.\d*)?GHz$/.test(value)) throw new InvalidValueException("speed", value);
+      this.#speed = value;
+    }
+
+    get socket() {
+      return this.#socket;
+    }
+    set socket(value) {
+      if (!value) throw new EmptyValueException("socket");
+      this.#socket = value;
+    }
+
+    get chipset() {
+      return this.#chipset;
+    }
+    set chipset(value) {
+      if (!value) throw new EmptyValueException("chipset");
+      this.#chipset = value;
+    }
+
+    get graphics() {
+      return this.#graphics;
+    }
+    set graphics(value) {
+      this.#graphics = value;
+    }
+    //Métodos públicos
+    toString() {
+      return super.toString() + " Clock speed: " + this.speed + " socket: " + this.socket +
+        " chipset: " + this.chipset + " graphics: " + this.graphics + "''";
+    }
+  }
+  Object.defineProperty(Processor.prototype, "speed", { enumerable: true });
+  Object.defineProperty(Processor.prototype, "socket", { enumerable: true });
+  Object.defineProperty(Processor.prototype, "chipset", { enumerable: true });
+  Object.defineProperty(Processor.prototype, "graphics", { enumerable: true });
+
+  //Definimos la subclase Graphic_Card
+  class Graphic_Card extends Product {
+    //Atributos privados
+    #brand;
+    #model;
+    #memory;
+    constructor(serialNumber, name, description, price, tax = Product.IVA, images, brand = "Unknown", model = "Unknown", memory = "0GB") {
+      //La función se invoca con el operador new
+      if (!new.target) throw new InvalidAccessConstructorException();
+      //Llamada al superconstructor.
+      abstractCreateLock = false; //Desactivamos el cerrojo.
+      super(serialNumber, name, description, price, tax, images);
+
+
+      //Validación de argumentos
+      if (!brand) throw new EmptyValueException("brand");
+      if (!model) throw new EmptyValueException("model");
+      if (!/^\d*GB$/.test(memory)) throw new InvalidValueException("memory", memory);
+
+      //Atributos privados
+      this.#brand = brand;
+      this.#model = model;
+      this.#memory = memory;
+    }
+
+    //Propiedades de acceso a los atributos privados
+    get brand() {
+      return this.#brand;
+    }
+    set brand(value) {
+      if (!value) throw new EmptyValueException("brand");
+      this.#brand = value;
+    }
+
+    get model() {
+      return this.#model;
+    }
+    set model(value) {
+      if (!value) throw new EmptyValueException("model");
+      this.#model = value;
     }
 
     get memory() {
       return this.#memory;
     }
     set memory(value) {
-      if (!/^((\d+GB)|(\d+TB))$/.test(value)) throw new InvalidValueException("memory", value);
+      if (!/^\d*GB$/.test(value)) throw new InvalidValueException("memory", value);
       this.#memory = value;
-    }
-
-    get hd() {
-      return this.#hd;
-    }
-    set hd(value) {
-      if (!/^((HDD)|(SDD))$/.test(value)) throw new InvalidValueException("hd", value);
-      this.#hd = value;
-    }
-
-    get size() {
-      return this.#size;
-    }
-    set size(value) {
-      if (!/^((\d+GB)|(\d+TB))$/.test(value)) throw new InvalidValueException("size", value);
-      this.#size = value;
-    }
-    //Métodos públicos
-    toString() {
-      return super.toString() + " System: " + this.system + " Processor: " + this.processor +
-        " Memoria: " + this.memory + " HD: " + this.hd + " Size: " + this.size;
-    }
-  }
-  Object.defineProperty(Laptop.prototype, "processor", { enumerable: true });
-  Object.defineProperty(Laptop.prototype, "memory", { enumerable: true });
-  Object.defineProperty(Laptop.prototype, "hd", { enumerable: true });
-  Object.defineProperty(Laptop.prototype, "size", { enumerable: true });
-  Object.defineProperty(Laptop.prototype, "system", { value: "Unknown", enumerable: true, writable: true });
-
-  //Definimos la subclase Camera
-  class Camera extends Product {
-    //Atributos privados
-    #type;
-    #resolution;
-    #size;
-    constructor(serial, brand, model, price, taxPercentage = Product.IVA, type = "-", resolution = 0, size = 0) {
-      //La función se invoca con el operador new
-      if (!new.target) throw new InvalidAccessConstructorException();
-      //Llamada al superconstructor.
-      abstractCreateLock = false; //Desactivamos el cerrojo.
-      super(serial, brand, model, price, taxPercentage);
-
-      //Validación de argumentos
-      resolution = Number.parseFloat(resolution);
-      size = Number.parseFloat(size);
-      if (!/^((Digital)|(Reflex)|(-))$/.test(type)) throw new InvalidValueException("type", type);
-      if (Number.isNaN(resolution) || resolution < 0) throw new InvalidValueException("resolution", resolution);
-      if (Number.isNaN(size) || size < 0) throw new InvalidValueException("size", size);
-
-      //Atributos privados
-      this.#type = type;
-      this.#resolution = resolution;
-      this.#size = size;
-    }
-
-    //Propiedades de acceso a los atributos privados
-    get type() {
-      return this.#type;
-    }
-    set type(value) {
-      if (!/^((Digital)|(Reflex)|(-))$/.test(value)) throw new InvalidValueException("type", value);
-      this.#type = value;
-    }
-
-    get resolution() {
-      return this.#resolution;
-    }
-    set resolution(value) {
-      value = Number.parseFloat(value);
-      if (Number.isNaN(value) || value < 0) throw new InvalidValueException("resolution", value);
-      this.#resolution = value;
-    }
-
-    get size() {
-      return this.#size;
-    }
-    set size(value) {
-      value = Number.parseFloat(value);
-      if (Number.isNaN(value) || value < 0) throw new InvalidValueException("size", value);
-      this.#size = value;
     }
 
     //Métodos públicos
     toString() {
       return super.toString() +
-        " Tipo: " + this.type + " Resolución: " + this.resolution + "MP Size: " + this.size + "''";
+        " Brand: " + this.brand + " Model: " + this.model + " Memory: " + this.memory + "''";
     }
   }
-  Object.defineProperty(Camera.prototype, "type", { enumerable: true });
-  Object.defineProperty(Camera.prototype, "resolution", { enumerable: true });
-  Object.defineProperty(Camera.prototype, "size", { enumerable: true });
+  Object.defineProperty(Graphic_Card.prototype, "brand", { enumerable: true });
+  Object.defineProperty(Graphic_Card.prototype, "model", { enumerable: true });
+  Object.defineProperty(Graphic_Card.prototype, "memory", { enumerable: true });
 
-  //Definimos la subclase Smartphone
-  class Smartphone extends Product {
+  //Definimos la subclase RAM
+  class RAM extends Product {
     //Atributos privados
-    #memory;
-    #storage;
-    #resolution;
-    #size;
-    constructor(serial, brand, model, price, taxPercentage = Product.IVA, memory = "0GB", storage = "0GB", resolution = "0x0", size = 0) {
+    #technology;
+    #capacity;
+    #speed;
+    constructor(serialNumber, name, description, price, tax = Product.IVA, images, technology = "Unknown", capacity = "0GB", speed = "0MHz") {
       //La función se invoca con el operador new
       if (!new.target) throw new InvalidAccessConstructorException();
       //Llamada al superconstructor.
       abstractCreateLock = false; //Desactivamos el cerrojo.
-      super(serial, brand, model, price, taxPercentage);
+      super(serialNumber, name, description, price, tax, images);
 
       //Validación de argumentos
-      if (!/^((\d+GB)|(\d+TB))$/.test(memory)) throw new InvalidValueException("memory", memory);
-      if (!/^((\d+GB)|(\d+TB))$/.test(storage)) throw new InvalidValueException("storage", storage);
-      size = Number.parseFloat(size);
-      if (Number.isNaN(size) || size < 0) throw new InvalidValueException("size", size);
-      if (!/^(\d+x\d+)$/.test(resolution)) throw new InvalidValueException("resolution", resolution);
+      if (!technology) throw new EmptyValueException("technology");
+      if (!/^\d*GB$/.test(capacity)) throw new InvalidValueException("memory", capacity);
+      if (!/^\d*GB$/.test(speed)) throw new InvalidValueException("speed", speed);
+
 
       //Atributos privados
-      this.#memory = memory;
-      this.#storage = storage;
-      this.#resolution = resolution;
-      this.#size = size;
+      this.#technology = technology;
+      this.#capacity = capacity;
+      this.#speed = speed;
     }
 
     //Propiedades de acceso a los atributos privados
-    get memory() {
-      return this.#memory;
+    get technology() {
+      return this.#technology;
     }
-    set memory(value) {
-      if (!/^((\d+GB)|(\d+TB))$/.test(value)) throw new InvalidValueException("memory", value);
-      this.#memory = value;
-    }
-
-    get resolution() {
-      return this.#resolution;
-    }
-    set resolution(value) {
-      if (!/^(\d+x\d+)$/.test(value)) throw new InvalidValueException("resolution", value);
-      this.#resolution = value;
+    set technology(value) {
+      if (!/^((\d+GB)|(\d+TB))$/.test(value)) throw new InvalidValueException("technology", value);
+      this.#technology = value;
     }
 
-    get storage() {
-      return this.#storage;
+    get capacity() {
+      return this.#capacity;
     }
-    set storage(value) {
-      if (!/^((\d+GB)|(\d+TB))$/.test(value)) throw new InvalidValueException("storage", value);
-      this.#storage = value;
+    set capacity(value) {
+      if (!/^(\d+x\d+)$/.test(value)) throw new InvalidValueException("capacity", value);
+      this.#capacity = value;
+    }
+
+    get speed() {
+      return this.#speed;
+    }
+    set speed(value) {
+      if (!/^((\d+GB)|(\d+TB))$/.test(value)) throw new InvalidValueException("speed", value);
+      this.#speed = value;
     }
 
     get size() {
@@ -305,94 +296,17 @@
     //Métodos públicos
     toString() {
       return super.toString() + " System: " + this.system +
-        " Memoria: " + this.memory + " Almacenamiento: " + this.storage + " Resolución: " + this.resolution + " Size: " + this.size + "''";
+        " Tecnología: " + this.technology + " Velocidad: " + this.speed + " Capacidad: " + this.capacity + "''";
     }
   }
-  Object.defineProperty(Smartphone.prototype, "memory", { enumerable: true });
-  Object.defineProperty(Smartphone.prototype, "storage", { enumerable: true });
-  Object.defineProperty(Smartphone.prototype, "resolution", { enumerable: true });
-  Object.defineProperty(Smartphone.prototype, "size", { enumerable: true });
-  Object.defineProperty(Smartphone.prototype, "system", { value: "Unknown", enumerable: true, writable: true });
-
-  //Definimos la subclase Tablet
-  class Tablet extends Product {
-    //Atributos privados
-    #memory;
-    #storage;
-    #resolution;
-    #size;
-    constructor(serial, brand, model, price, taxPercentage = Product.IVA, memory = "0GB", storage = "0GB", resolution = "0x0", size = 0) {
-      //La función se invoca con el operador new
-      if (!new.target) throw new InvalidAccessConstructorException();
-      //Llamada al superconstructor.
-      abstractCreateLock = false; //Desactivamos el cerrojo.
-      super(serial, brand, model, price, taxPercentage);
-
-      //Validación de argumentos
-      if (!/^((\d+GB)|(\d+TB))$/.test(memory)) throw new InvalidValueException("memory", memory);
-      if (!/^((\d+GB)|(\d+TB))$/.test(storage)) throw new InvalidValueException("storage", storage);
-      size = Number.parseFloat(size);
-      if (Number.isNaN(size) || size < 0) throw new InvalidValueException("size", size);
-      if (!/^(\d+x\d+)$/.test(resolution)) throw new InvalidValueException("resolution", resolution);
-
-      //Atributos privados
-      this.#memory = memory;
-      this.#storage = storage;
-      this.#resolution = resolution;
-      this.#size = size;
-    }
-
-    //Propiedades de acceso a los atributos privados
-    get memory() {
-      return this.#memory;
-    }
-    set memory(value) {
-      if (!/^((\d+GB)|(\d+TB))$/.test(value)) throw new InvalidValueException("memory", value);
-      this.#memory = value;
-    }
-
-    get resolution() {
-      return this.#resolution;
-    }
-    set resolution(value) {
-      if (!/^(\d+x\d+)$/.test(value)) throw new InvalidValueException("resolution", value);
-      this.#resolution = value;
-    }
-
-    get storage() {
-      return this.#storage;
-    }
-    set storage(value) {
-      if (!/^((\d+GB)|(\d+TB))$/.test(value)) throw new InvalidValueException("storage", value);
-      this.#storage = value;
-    }
-
-    get size() {
-      return this.#size;
-    }
-    set size(value) {
-      value = Number.parseFloat(value);
-      if (Number.isNaN(value) || value < 0) throw new InvalidValueException("size", value);
-      this.#size = value;
-    }
-
-    //Métodos públicos
-    toString() {
-      return super.toString() + " System: " + " System: " + this.system +
-        " Memoria: " + this.memory + " Almacenamiento: " + this.storage + " Resolución: " + this.resolution + " Size: " + this.size + "''";
-    }
-  }
-  Object.defineProperty(Tablet.prototype, "memory", { enumerable: true });
-  Object.defineProperty(Tablet.prototype, "storage", { enumerable: true });
-  Object.defineProperty(Tablet.prototype, "resolution", { enumerable: true });
-  Object.defineProperty(Tablet.prototype, "size", { enumerable: true });
-  Object.defineProperty(Tablet.prototype, "system", { value: "Unknown", enumerable: true, writable: true });
+  Object.defineProperty(RAM.prototype, "technology", { enumerable: true });
+  Object.defineProperty(RAM.prototype, "speed", { enumerable: true });
+  Object.defineProperty(RAM.prototype, "capacity", { enumerable: true });
 
   window.Product = Product;
-  window.Laptop = Laptop;
-  window.Camera = Camera;
-  window.Smartphone = Smartphone;
-  window.Tablet = Tablet;
+  window.Processor = Processor;
+  window.Graphic_Card = Graphic_Card;
+  window.RAM = RAM;
 
 })(); //Invocamos la función global.
 

@@ -228,7 +228,7 @@ let StoreHouse = (function () { //La función anónima devuelve un método getIn
         if (position === -1) throw new NotExistException(shop);
         // Añadimos todos los productos a la tienda por defecto
         this.#stores.forEach(store => {
-          if(store.store.CIF == shop.CIF){
+          if (store.store.CIF == shop.CIF) {
             store.products.forEach(product => {
               this.stores[0].products.push(product);
             });
@@ -240,14 +240,14 @@ let StoreHouse = (function () { //La función anónima devuelve un método getIn
       // Devuelve la relación de todos los productos añadidos en una tienda con su stock. Si pasamos un tipo de producto, el resultado estará filtrado por ese tipo.
       getShopProducts(shop, type = Product) {
         if (!shop) throw new EmptyValueException("shop");
-        let position= this.getStorePosition(shop) ;
+        let position = this.getStorePosition(shop);
         if (position === -1) throw new NotExistException(shop);
         let nextIndex = 0;
         // referencia para habilitar el closure en el objeto
         let array = [];
         this.#stores[position].products.forEach(product => {
           if (product.product instanceof type) { // Comprobamos si es del tipo de producto que queremos
-              array.push({ product: product.product, stock: product.stock }); // Pasamos el objeto producto y stock. Así no pasamos la variable categories del producto
+            array.push({ product: product.product, stock: product.stock }); // Pasamos el objeto producto y stock. Así no pasamos la variable categories del producto
           }
         });
         return {

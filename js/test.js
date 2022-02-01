@@ -167,7 +167,7 @@ function testERP() {
   almacen.addShop(store2);
   console.log("eleminamos una");
   almacen.removeShop(store2);
-    console.log("Tiendas del almacen");
+  console.log("Tiendas del almacen");
   let stores = almacen.stores;
   let store = stores.next();
   while (!store.done) { // Mientras la propiedad "done" no es true.
@@ -175,13 +175,7 @@ function testERP() {
     store = stores.next();
   }
   almacen.addProductInShop(ram1, store1);
-  almacen.addQuantityProductInShop(ram1, store1, 2);
-  let cats4 = almacen.getCategoryProducts(cat1, Processor);
-  let cat4 = cats4.next();
-  while (!cat4.done) { // Mientras la propiedad "done" no es true.
-    console.log(cat4.value);
-    cat4 = cats4.next();
-  }
+
 }
 
 window.onload = testERP;

@@ -5,8 +5,8 @@ class Coords {
   #longitude;
   constructor(latitude, longitude) {
     if (!new.target) throw new InvalidAccessConstructorException();
-    if (latitude===0 || !latitude) throw new EmptyValueException("latitude");
-    if (latitude===0 || !longitude) throw new EmptyValueException("longitude");
+    if (latitude === 0 || !latitude) throw new EmptyValueException("latitude");
+    if (latitude === 0 || !longitude) throw new EmptyValueException("longitude");
 
     this.#latitude = latitude;
     this.#longitude = longitude;

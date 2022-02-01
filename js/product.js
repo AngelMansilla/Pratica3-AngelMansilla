@@ -1,4 +1,5 @@
 "use strict";
+
 (function () {
   let abstractCreateLock = true; //Definición del cerrojo.
   //Constructor de Product. Permite definir propiedades comunes para todos los productos de la tienda.
@@ -88,13 +89,6 @@
       return 21;
     }
 
-    // Métodos públicos
-    get priceWithoutTaxes() {
-      return this.price - (this.price * this.tax / 100);
-    }
-    get tax() {
-      return this.price * this.tax / 100;
-    }
     toString() {
       return "Serial Number: " + this.serialNumber + " Name: " + this.name + " Description: " + this.description + " Price: " + this.price + "€ Tax: " + this.tax + "%";
     }
@@ -250,7 +244,7 @@
       //Validación de argumentos
       if (!technology) throw new EmptyValueException("technology");
       if (!/^\d*GB$/.test(capacity)) throw new InvalidValueException("memory", capacity);
-      if (!/^\d*GB$/.test(speed)) throw new InvalidValueException("speed", speed);
+      if (!/^\d*MHz$/.test(speed)) throw new InvalidValueException("speed", speed);
 
 
       //Atributos privados
@@ -284,15 +278,6 @@
       this.#speed = value;
     }
 
-    get size() {
-      return this.#size;
-    }
-    set size(value) {
-      value = Number.parseFloat(value);
-      if (Number.isNaN(value) || value < 0) throw new InvalidValueException("size", value);
-      this.#size = value;
-    }
-
     //Métodos públicos
     toString() {
       return super.toString() + " System: " + this.system +
@@ -309,6 +294,8 @@
   window.RAM = RAM;
 
 })(); //Invocamos la función global.
+
+
 
 
 

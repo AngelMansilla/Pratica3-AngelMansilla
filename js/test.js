@@ -174,8 +174,46 @@ function testERP() {
     console.log(store.value);
     store = stores.next();
   }
-  almacen.addProductInShop(ram1, store1);
+  // Testear metodos:  getCategoryProducts
 
+  console.log("Comprobamos que añadimos el producto ram 1 a la store1")
+  almacen.addProductInShop(ram1, store1, [cat1.title]);
+
+  let products5 = almacen.getShopProducts(store1);
+  let product5 = products5.next();
+  while (!product5.done) { // Mientras la propiedad "done" no es true.
+    console.log(product5.value);
+    product5 = products5.next();
+  }
+
+  almacen.addQuantityProductInShop(ram1, store1);
+
+  let products6 = almacen.getShopProducts(store1);
+  let product6 = products6.next();
+  while (!product6.done) { // Mientras la propiedad "done" no es true.
+    console.log(product6.value);
+    product6 = products6.next();
+  }
+  console.log("Borramos la ram1 de la store1, añadimos pro2 y añadimos gra1 en categoria default");
+  almacen.addProductInShop(pro2, store1, [cat1.title]);
+  almacen.addProductInShop(gra1, store1);
+  almacen.removeProductInShop(ram1, store1);
+
+  let products8 = almacen.getShopProducts(store1);
+  let product8 = products8.next();
+  while (!product8.done) { // Mientras la propiedad "done" no es true.
+    console.log(product8.value);
+    product8 = products8.next();
+  }
+
+  console.log("Obtenemos todos los productos de cat1, como hemos borrado ram1 deberíamos obtener el pro2");
+
+  let products7 = almacen.getCategoryProducts(cat1);
+  let product7 = products7.next();
+  while (!product7.done) { // Mientras la propiedad "done" no es true.
+    console.log(product7.value);
+    product7 = products7.next();
+  }
 }
 
 window.onload = testERP;

@@ -154,14 +154,17 @@ let StoreHouse = (function () { //La función anónima devuelve un método getIn
       }
       // Añade un nuevo producto asociado a una o más categorías.
       // Entiendo que con addProduct añadimos los productos siempre a la tienda por defecto.
-      addProduct(product, category = "Default") { // Si no introducimos categoría, seleccionamos por defecto
+      addProduct(product, category = [this.#categories[0].title]) { // Si no introducimos categoría, seleccionamos por defecto
         if (!product) throw new EmptyValueException("product"); // product no es null
-        if (this.getCategoryPositionByName(category) === -1) throw new NotExistException(category); // Comprobamos que exista la categoría
+        //Comprobamos cada categoria si existe
+        category.forEach(cat => {
+          if (this.getCategoryPositionByName(cat) === -1) throw new NotExistException(cat); // Comprobamos que exista la categoría
+        });
         if (this.getProductPosition(product) !== -1) throw new ExistException(product); // El producto ya existe y lanzamos excepción
-        this.#stores[0].products.push({ product: product, categories: [category.title], stock: 1 }); // Añadimos 1 por defectoo
+        this.#stores[0].products.push({ product: product, categories: category, stock: 1 }); // Añadimos 1 por defectoo
         return this.#stores[0].products.length;
       }
-      // Elimina un producto junto con todas sus relaciones con otros objetos del alamacen.
+      // Elimina un producto de la tienda por defecto.
       removeProduct(product) {
         let position = this.getProductPosition(product);
         if (position === -1) throw new NotExistException(product); // El producto no existe
@@ -170,13 +173,28 @@ let StoreHouse = (function () { //La función anónima devuelve un método getIn
       }
       // Añade un Product en una tienda con un nº de unidades.
       // En este metodo añadire productos no existentes en una tienda, así el metodo addQuantityProductInShop lo usaremos para añadir sotck en un producto existente en una tienda.
-      addProductInShop(product, shop, stock = 1) {
+      // También añado la opcion de agregar un array de categorias del producto.
+      addProductInShop(product, shop, category = [this.#categories[0].title]) {
+        if (!product) throw new EmptyValueException("product"); // product no es null
         // Voy a quitar la excepcion de shop no existe.
         // Es mas util el metodo si podemos añadir productos diferentes a una misma tienda. Siendo poco eficiente tener los productos seprados de una misma tienda.
         if (this.getProductPosition(product, shop) !== -1) throw new ExistException(product); // A la vez que comprobamos si existe el producto comprobamos si existe la tienda
-        if (!Number.isInteger(stock) || stock < 1) throw new InvalidValueException("stock", stock);
-        this.#stores.push({ store: shop, products: [{ product: product, categories: [this.#categories[0].title], stock: stock }] });
+        //Comprobamos cada categoria si existe
+        category.forEach(cat => {
+          if (this.getCategoryPositionByName(cat) === -1) throw new NotExistException(cat); // Comprobamos que exista la categoría
+        });
+        this.#stores.push({ store: shop, products: [] });
+        this.#stores[this.getStorePosition(shop)].products.push({ product: product, categories: category, stock: 1 });
         return this.#stores.length; // Devolvemos el tamaño del array tiendas
+      }
+
+      // Elimina un producto de una tienda concreta
+      removeProductInShop(product, shop = this.#stores[0]) {
+        let position = this.getProductPosition(product, shop);
+        if (this.getProductPosition(product, shop) === -1) throw new NotExistException(product); // A la vez que comprobamos si no existe el producto comprobamos si existe la tienda
+        if (position === -1) throw new NotExistException(product); // El producto no existe
+        this.#stores[this.getStorePosition(shop)].products.splice(position, 1);
+        return this.#stores[this.getStorePosition(shop)].products.length;
       }
       // Dado un Product y un Shop, se suman la cantidad de elementos al stock de esa tienda. Por defecto 1.
       addQuantityProductInShop(product, shop, stock = 1) {
@@ -192,18 +210,16 @@ let StoreHouse = (function () { //La función anónima devuelve un método getIn
         let nextIndex = 0;
         // referencia para habilitar el closure en el objeto
         let array = [];
-        let stores = this.#stores;
-        let store = stores.next();
-        while (!store.done) {
+        this.#stores.forEach(store => {
           store.products.forEach(product => {
-            if (product instanceof type) { // Comprobamos si es del tipo de producto que queremos
-              if (product.categories.indexOf(category.title) !== -1) { // Comprobamos que tenga esa categoria por el titulo, que es lo que guardamos en el array categories de los productos
-                array.push({ product: product.product, stock: product.stock }); // Pasamos el objeto producto y stock. Así no pasamos la variable categories del producto
-              }
+            // if (product instanceof type) { // Comprobamos si es del tipo de producto que queremos
+            if (product.categories.indexOf(category.title) !== -1) { // Comprobamos que tenga esa categoria por el titulo, que es lo que guardamos en el array categories de los productos
+              array.push({ product: product.product, stock: product.stock }); // Pasamos el objeto producto y stock. Así no pasamos la variable categories del producto
             }
+            // }
           });
-          store = stores.next();
-        }
+        });
+
         // Una vez quet enemos el array de los productos filtrado, retornamos el iterador de estos.
         return {
           next: function () {
